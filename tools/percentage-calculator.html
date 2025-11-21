@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Percentage Calculator - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-percent"></i> Percentage Calculator</h1>
+                <p>Calculate percentages, increase, and decrease</p>
+            </div>
+
+            <div class="tool-container">
+                <!-- Calculate percentage -->
+                <h3 style="margin-bottom: 1rem;">What is X% of Y?</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; align-items: end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="number" id="percent1" placeholder="X" oninput="calculate1()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="number" id="number1" placeholder="Y" oninput="calculate1()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="number" id="result1" placeholder="Result" readonly style="background-color: var(--bg-light);">
+                    </div>
+                </div>
+
+                <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+                <!-- X is what percent of Y -->
+                <h3 style="margin-bottom: 1rem;">X is what % of Y?</h3>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.5rem; align-items: end;">
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="number" id="number2" placeholder="X" oninput="calculate2()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="number" id="total2" placeholder="Y" oninput="calculate2()">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 0;">
+                        <input type="text" id="result2" placeholder="Result %" readonly style="background-color: var(--bg-light);">
+                    </div>
+                </div>
+
+                <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+                <!-- Percentage increase/decrease -->
+                <h3 style="margin-bottom: 1rem;">Percentage Increase/Decrease</h3>
+                <div class="form-group">
+                    <label for="originalValue">Original Value:</label>
+                    <input type="number" id="originalValue" placeholder="Enter original value" oninput="calculate3()">
+                </div>
+                <div class="form-group">
+                    <label for="newValue">New Value:</label>
+                    <input type="number" id="newValue" placeholder="Enter new value" oninput="calculate3()">
+                </div>
+                <div class="result-box" id="result3Box" style="display: none;">
+                    <h3>Result</h3>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);" id="result3"></div>
+                        <div style="color: var(--text-light); margin-top: 0.5rem;" id="result3Text"></div>
+                    </div>
+                </div>
+
+                <hr style="margin: 2rem 0; border: none; border-top: 2px solid var(--border-color);">
+
+                <!-- Add/Subtract percentage -->
+                <h3 style="margin-bottom: 1rem;">Add/Subtract Percentage from Number</h3>
+                <div class="form-group">
+                    <label for="baseNumber">Base Number:</label>
+                    <input type="number" id="baseNumber" placeholder="Enter base number" oninput="calculate4()">
+                </div>
+                <div class="form-group">
+                    <label for="percentChange">Percentage (use negative for decrease):</label>
+                    <input type="number" id="percentChange" placeholder="Enter percentage" oninput="calculate4()">
+                </div>
+                <div class="result-box" id="result4Box" style="display: none;">
+                    <h3>Result</h3>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);" id="result4"></div>
+                        <div style="color: var(--text-light); margin-top: 0.5rem;" id="result4Text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function calculate1() {
+            const percent = parseFloat(document.getElementById('percent1').value);
+            const number = parseFloat(document.getElementById('number1').value);
+            
+            if (!isNaN(percent) && !isNaN(number)) {
+                const result = (percent / 100) * number;
+                document.getElementById('result1').value = result.toFixed(2);
+            } else {
+                document.getElementById('result1').value = '';
+            }
+        }
+
+        function calculate2() {
+            const number = parseFloat(document.getElementById('number2').value);
+            const total = parseFloat(document.getElementById('total2').value);
+            
+            if (!isNaN(number) && !isNaN(total) && total !== 0) {
+                const result = (number / total) * 100;
+                document.getElementById('result2').value = result.toFixed(2) + '%';
+            } else {
+                document.getElementById('result2').value = '';
+            }
+        }
+
+        function calculate3() {
+            const original = parseFloat(document.getElementById('originalValue').value);
+            const newValue = parseFloat(document.getElementById('newValue').value);
+            
+            if (!isNaN(original) && !isNaN(newValue) && original !== 0) {
+                const change = ((newValue - original) / original) * 100;
+                const isIncrease = change > 0;
+                
+                document.getElementById('result3').textContent = Math.abs(change).toFixed(2) + '%';
+                document.getElementById('result3Text').textContent = 
+                    isIncrease ? 'Percentage Increase' : 'Percentage Decrease';
+                document.getElementById('result3').style.color = 
+                    isIncrease ? 'var(--success-color)' : 'var(--danger-color)';
+                document.getElementById('result3Box').style.display = 'block';
+            } else {
+                document.getElementById('result3Box').style.display = 'none';
+            }
+        }
+
+        function calculate4() {
+            const base = parseFloat(document.getElementById('baseNumber').value);
+            const percent = parseFloat(document.getElementById('percentChange').value);
+            
+            if (!isNaN(base) && !isNaN(percent)) {
+                const result = base + (base * percent / 100);
+                const change = result - base;
+                
+                document.getElementById('result4').textContent = result.toFixed(2);
+                document.getElementById('result4Text').textContent = 
+                    `Change: ${change > 0 ? '+' : ''}${change.toFixed(2)}`;
+                document.getElementById('result4Box').style.display = 'block';
+            } else {
+                document.getElementById('result4Box').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

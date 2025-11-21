@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON Formatter - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-file-code"></i> JSON Formatter</h1>
+                <p>Format, validate, and beautify JSON data</p>
+            </div>
+
+            <div class="tool-container">
+                <div class="form-group">
+                    <label for="jsonInput">Enter JSON:</label>
+                    <textarea id="jsonInput" placeholder='{"name": "John", "age": 30}'></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="formatJSON()">
+                        <i class="fas fa-magic"></i> Format JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="minifyJSON()">
+                        <i class="fas fa-compress"></i> Minify JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="validateJSON()">
+                        <i class="fas fa-check"></i> Validate JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyResult()">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+
+                <div id="messageArea"></div>
+
+                <div class="form-group">
+                    <label for="jsonOutput">Result:</label>
+                    <textarea id="jsonOutput" placeholder="Formatted JSON will appear here..." readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function formatJSON() {
+            const input = document.getElementById('jsonInput').value.trim();
+            const output = document.getElementById('jsonOutput');
+            const messageArea = document.getElementById('messageArea');
+
+            try {
+                const parsed = JSON.parse(input);
+                output.value = JSON.stringify(parsed, null, 2);
+                showMessage('JSON formatted successfully!', 'success');
+            } catch (error) {
+                showMessage('Invalid JSON: ' + error.message, 'error');
+                output.value = '';
+            }
+        }
+
+        function minifyJSON() {
+            const input = document.getElementById('jsonInput').value.trim();
+            const output = document.getElementById('jsonOutput');
+
+            try {
+                const parsed = JSON.parse(input);
+                output.value = JSON.stringify(parsed);
+                showMessage('JSON minified successfully!', 'success');
+            } catch (error) {
+                showMessage('Invalid JSON: ' + error.message, 'error');
+                output.value = '';
+            }
+        }
+
+        function validateJSON() {
+            const input = document.getElementById('jsonInput').value.trim();
+
+            try {
+                JSON.parse(input);
+                showMessage('✓ Valid JSON!', 'success');
+            } catch (error) {
+                showMessage('✗ Invalid JSON: ' + error.message, 'error');
+            }
+        }
+
+        function copyResult() {
+            const output = document.getElementById('jsonOutput');
+            if (output.value) {
+                output.select();
+                document.execCommand('copy');
+                showMessage('Copied to clipboard!', 'success');
+            } else {
+                showMessage('Nothing to copy', 'error');
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('jsonInput').value = '';
+            document.getElementById('jsonOutput').value = '';
+            document.getElementById('messageArea').innerHTML = '';
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            messageArea.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hash Generator - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-hashtag"></i> Hash Generator</h1>
+                <p>Generate MD5, SHA-1, SHA-256 hashes from text</p>
+            </div>
+
+            <div class="tool-container">
+                <div class="form-group">
+                    <label for="textInput">Enter text:</label>
+                    <textarea id="textInput" placeholder="Enter text to hash..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="generateHashes()">
+                        <i class="fas fa-hashtag"></i> Generate Hashes
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+
+                <div id="hashResults" style="display: none;">
+                    <div class="result-box">
+                        <h3>MD5</h3>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="text" id="md5Output" readonly style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="copyHash('md5Output')" style="padding: 8px 16px;">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h3>SHA-1</h3>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="text" id="sha1Output" readonly style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="copyHash('sha1Output')" style="padding: 8px 16px;">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="result-box">
+                        <h3>SHA-256</h3>
+                        <div style="display: flex; gap: 0.5rem; align-items: center;">
+                            <input type="text" id="sha256Output" readonly style="flex: 1;">
+                            <button class="btn btn-secondary" onclick="copyHash('sha256Output')" style="padding: 8px 16px;">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="messageArea"></div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    <script>
+        async function generateHashes() {
+            const input = document.getElementById('textInput').value;
+
+            if (!input) {
+                showMessage('Please enter text to hash', 'error');
+                return;
+            }
+
+            // Generate MD5
+            const md5Hash = CryptoJS.MD5(input).toString();
+            document.getElementById('md5Output').value = md5Hash;
+
+            // Generate SHA-1
+            const sha1Hash = CryptoJS.SHA1(input).toString();
+            document.getElementById('sha1Output').value = sha1Hash;
+
+            // Generate SHA-256
+            const sha256Hash = CryptoJS.SHA256(input).toString();
+            document.getElementById('sha256Output').value = sha256Hash;
+
+            document.getElementById('hashResults').style.display = 'block';
+            showMessage('Hashes generated successfully!', 'success');
+        }
+
+        function copyHash(elementId) {
+            const element = document.getElementById(elementId);
+            element.select();
+            document.execCommand('copy');
+            showMessage('Hash copied to clipboard!', 'success');
+        }
+
+        function clearAll() {
+            document.getElementById('textInput').value = '';
+            document.getElementById('hashResults').style.display = 'none';
+            document.getElementById('messageArea').innerHTML = '';
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            messageArea.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

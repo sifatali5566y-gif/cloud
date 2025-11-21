@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Encoder/Decoder - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-link"></i> URL Encoder/Decoder</h1>
+                <p>Encode and decode URL strings</p>
+            </div>
+
+            <div class="tool-container">
+                <div class="form-group">
+                    <label for="urlInput">Enter URL or text:</label>
+                    <textarea id="urlInput" placeholder="Enter URL or text to encode/decode..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-primary" onclick="encodeURL()">
+                        <i class="fas fa-lock"></i> Encode URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="decodeURL()">
+                        <i class="fas fa-unlock"></i> Decode URL
+                    </button>
+                    <button class="btn btn-secondary" onclick="copyResult()">
+                        <i class="fas fa-copy"></i> Copy Result
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+
+                <div id="messageArea"></div>
+
+                <div class="form-group">
+                    <label for="resultOutput">Result:</label>
+                    <textarea id="resultOutput" placeholder="Result will appear here..." readonly></textarea>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        function encodeURL() {
+            const input = document.getElementById('urlInput').value;
+            const output = document.getElementById('resultOutput');
+
+            if (!input) {
+                showMessage('Please enter text to encode', 'error');
+                return;
+            }
+
+            try {
+                const encoded = encodeURIComponent(input);
+                output.value = encoded;
+                showMessage('URL encoded successfully!', 'success');
+            } catch (error) {
+                showMessage('Error encoding URL: ' + error.message, 'error');
+            }
+        }
+
+        function decodeURL() {
+            const input = document.getElementById('urlInput').value;
+            const output = document.getElementById('resultOutput');
+
+            if (!input) {
+                showMessage('Please enter URL to decode', 'error');
+                return;
+            }
+
+            try {
+                const decoded = decodeURIComponent(input);
+                output.value = decoded;
+                showMessage('URL decoded successfully!', 'success');
+            } catch (error) {
+                showMessage('Invalid URL encoding: ' + error.message, 'error');
+            }
+        }
+
+        function copyResult() {
+            const output = document.getElementById('resultOutput');
+            if (output.value) {
+                output.select();
+                document.execCommand('copy');
+                showMessage('Copied to clipboard!', 'success');
+            } else {
+                showMessage('Nothing to copy', 'error');
+            }
+        }
+
+        function clearAll() {
+            document.getElementById('urlInput').value = '';
+            document.getElementById('resultOutput').value = '';
+            document.getElementById('messageArea').innerHTML = '';
+        }
+
+        function showMessage(message, type) {
+            const messageArea = document.getElementById('messageArea');
+            const alertClass = type === 'success' ? 'alert-success' : 'alert-error';
+            messageArea.innerHTML = `<div class="alert ${alertClass}">${message}</div>`;
+            
+            setTimeout(() => {
+                messageArea.innerHTML = '';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
