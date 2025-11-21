@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-dollar-sign"></i> Currency Converter</h1>
+                <p>Convert between different currencies (sample rates)</p>
+            </div>
+
+            <div class="tool-container">
+                <div class="alert alert-success">
+                    <i class="fas fa-info-circle"></i> Note: Using sample exchange rates for demonstration
+                </div>
+
+                <div class="form-group">
+                    <label for="amount">Amount:</label>
+                    <input type="number" id="amount" placeholder="Enter amount" value="100" oninput="convertCurrency()">
+                </div>
+
+                <div class="form-group">
+                    <label for="fromCurrency">From Currency:</label>
+                    <select id="fromCurrency" onchange="convertCurrency()">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR">EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                        <option value="JPY">JPY - Japanese Yen</option>
+                        <option value="CNY">CNY - Chinese Yuan</option>
+                        <option value="INR">INR - Indian Rupee</option>
+                        <option value="AUD">AUD - Australian Dollar</option>
+                        <option value="CAD">CAD - Canadian Dollar</option>
+                        <option value="CHF">CHF - Swiss Franc</option>
+                        <option value="MXN">MXN - Mexican Peso</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="toCurrency">To Currency:</label>
+                    <select id="toCurrency" onchange="convertCurrency()">
+                        <option value="USD">USD - US Dollar</option>
+                        <option value="EUR" selected>EUR - Euro</option>
+                        <option value="GBP">GBP - British Pound</option>
+                        <option value="JPY">JPY - Japanese Yen</option>
+                        <option value="CNY">CNY - Chinese Yuan</option>
+                        <option value="INR">INR - Indian Rupee</option>
+                        <option value="AUD">AUD - Australian Dollar</option>
+                        <option value="CAD">CAD - Canadian Dollar</option>
+                        <option value="CHF">CHF - Swiss Franc</option>
+                        <option value="MXN">MXN - Mexican Peso</option>
+                    </select>
+                </div>
+
+                <div class="result-box">
+                    <h3>Result</h3>
+                    <div style="text-align: center; padding: 1rem;">
+                        <div style="font-size: 2rem; font-weight: 700; color: var(--primary-color);" id="result">0.00</div>
+                        <div style="color: var(--text-light); margin-top: 0.5rem;" id="rateInfo"></div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button class="btn btn-secondary" onclick="swapCurrencies()">
+                        <i class="fas fa-exchange-alt"></i> Swap Currencies
+                    </button>
+                    <button class="btn btn-secondary" onclick="clearAll()">
+                        <i class="fas fa-trash"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Sample exchange rates (relative to USD)
+        const exchangeRates = {
+            USD: 1,
+            EUR: 0.92,
+            GBP: 0.79,
+            JPY: 149.50,
+            CNY: 7.24,
+            INR: 83.12,
+            AUD: 1.52,
+            CAD: 1.36,
+            CHF: 0.88,
+            MXN: 17.15
+        };
+
+        function convertCurrency() {
+            const amount = parseFloat(document.getElementById('amount').value);
+            const fromCurrency = document.getElementById('fromCurrency').value;
+            const toCurrency = document.getElementById('toCurrency').value;
+
+            if (isNaN(amount) || amount < 0) {
+                document.getElementById('result').textContent = '0.00';
+                document.getElementById('rateInfo').textContent = '';
+                return;
+            }
+
+            // Convert to USD first, then to target currency
+            const amountInUSD = amount / exchangeRates[fromCurrency];
+            const result = amountInUSD * exchangeRates[toCurrency];
+
+            document.getElementById('result').textContent = result.toFixed(2) + ' ' + toCurrency;
+            
+            const rate = exchangeRates[toCurrency] / exchangeRates[fromCurrency];
+            document.getElementById('rateInfo').textContent = 
+                `1 ${fromCurrency} = ${rate.toFixed(4)} ${toCurrency}`;
+        }
+
+        function swapCurrencies() {
+            const fromCurrency = document.getElementById('fromCurrency');
+            const toCurrency = document.getElementById('toCurrency');
+            const temp = fromCurrency.value;
+            fromCurrency.value = toCurrency.value;
+            toCurrency.value = temp;
+            convertCurrency();
+        }
+
+        function clearAll() {
+            document.getElementById('amount').value = '';
+            document.getElementById('result').textContent = '0.00';
+            document.getElementById('rateInfo').textContent = '';
+        }
+
+        // Initialize
+        convertCurrency();
+    </script>
+</body>
+</html>

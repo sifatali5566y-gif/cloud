@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Cropper - Toolkity</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="../css/style.css">
+    <style>
+        .crop-container {
+            position: relative;
+            max-width: 100%;
+            margin: 1.5rem 0;
+            display: inline-block;
+        }
+        #cropCanvas {
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            max-width: 100%;
+            cursor: crosshair;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <nav class="container nav">
+            <div class="logo">
+                <i class="fas fa-tools"></i>
+                <span>Toolkity</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#tools">Tools</a></li>
+                <li><a href="../index.html#about">About</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="tool-page">
+        <div class="container">
+            <div class="tool-header">
+                <h1><i class="fas fa-crop"></i> Image Cropper</h1>
+                <p>Crop images to custom size</p>
+            </div>
+
+            <div class="tool-container">
+                <div class="file-upload" onclick="document.getElementById('imageInput').click()">
+                    <i class="fas fa-cloud-upload-alt" style="font-size: 3rem; color: var(--primary-color);"></i>
+                    <p style="margin-top: 1rem;">Click to upload an image</p>
+                    <input type="file" id="imageInput" accept="image/*" onchange="loadImage(event)">
+                </div>
+
+                <div id="cropControls" style="display: none;">
+                    <div class="crop-container">
+                        <canvas id="cropCanvas"></canvas>
+                    </div>
+
+                    <p style="color: var(--text-light); margin-bottom: 1rem;">
+                        <i class="fas fa-info-circle"></i> Click and drag on the image to select the crop area
+                    </p>
+
+                    <div class="button-group">
+                        <button class="btn btn-primary" onclick="cropImage()">
+                            <i class="fas fa-crop"></i> Crop Image
+                        </button>
+                        <button class="btn btn-secondary" onclick="resetCrop()">
+                            <i class="fas fa-undo"></i> Reset
+                        </button>
+                        <button class="btn btn-secondary" onclick="downloadImage()">
+                            <i class="fas fa-download"></i> Download
+                        </button>
+                    </div>
+                </div>
+
+                <div id="resultArea" style="display: none; margin-top: 1.5rem;">
+                    <h3>Cropped Image</h3>
+                    <div class="preview-area">
+                        <img id="croppedImage" alt="Cropped">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-bottom">
+                <p>&copy; 2024 Toolkity. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        let canvas, ctx, img;
+        let isDrawing = false;
+        let startX, startY, currentX, currentY;
+        let croppedDataUrl = null;
+
+        function loadImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    img = new Image();
+                    img.onload = function() {
+                        canvas = document.getElementById('cropCanvas');
+                        ctx = canvas.getContext('2d');
+                        
+                        const maxWidth = 800;
+                        const scale = Math.min(1, maxWidth / img.width);
+                        canvas.width = img.width * scale;
+                        canvas.height = img.height * scale;
+                        
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        
+                        document.getElementById('cropControls').style.display = 'block';
+                        setupCropHandlers();
+                    };
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function setupCropHandlers() {
+            canvas.addEventListener('mousedown', startCrop);
+            canvas.addEventListener('mousemove', drawCrop);
+            canvas.addEventListener('mouseup', endCrop);
+        }
+
+        function startCrop(e) {
+            isDrawing = true;
+            const rect = canvas.getBoundingClientRect();
+            startX = e.clientX - rect.left;
+            startY = e.clientY - rect.top;
+        }
+
+        function drawCrop(e) {
+            if (!isDrawing) return;
+            
+            const rect = canvas.getBoundingClientRect();
+            currentX = e.clientX - rect.left;
+            currentY = e.clientY - rect.top;
+            
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#6366f1';
+            ctx.lineWidth = 2;
+            ctx.strokeRect(startX, startY, currentX - startX, currentY - startY);
+            
+            ctx.fillStyle = 'rgba(99, 102, 241, 0.1)';
+            ctx.fillRect(startX, startY, currentX - startX, currentY - startY);
+        }
+
+        function endCrop() {
+            isDrawing = false;
+        }
+
+        function cropImage() {
+            if (!startX || !currentX) {
+                alert('Please select an area to crop');
+                return;
+            }
+
+            const width = Math.abs(currentX - startX);
+            const height = Math.abs(currentY - startY);
+            const x = Math.min(startX, currentX);
+            const y = Math.min(startY, currentY);
+
+            const cropCanvas = document.createElement('canvas');
+            cropCanvas.width = width;
+            cropCanvas.height = height;
+            const cropCtx = cropCanvas.getContext('2d');
+
+            const scaleX = img.width / canvas.width;
+            const scaleY = img.height / canvas.height;
+
+            cropCtx.drawImage(img, 
+                x * scaleX, y * scaleY, width * scaleX, height * scaleY,
+                0, 0, width, height);
+
+            croppedDataUrl = cropCanvas.toDataURL('image/png');
+            document.getElementById('croppedImage').src = croppedDataUrl;
+            document.getElementById('resultArea').style.display = 'block';
+        }
+
+        function resetCrop() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            startX = startY = currentX = currentY = null;
+            document.getElementById('resultArea').style.display = 'none';
+        }
+
+        function downloadImage() {
+            if (!croppedDataUrl) {
+                alert('Please crop the image first');
+                return;
+            }
+
+            const link = document.createElement('a');
+            link.download = 'cropped-image.png';
+            link.href = croppedDataUrl;
+            link.click();
+        }
+    </script>
+</body>
+</html>
